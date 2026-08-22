@@ -80,16 +80,25 @@ public class PrescriptionExtraction {
 
     private Instant completedAt;
 
-    private PrescriptionExtraction(String ownerKey, String imageKey, Instant createdAt) {
-        this.publicId = PUBLIC_ID_PREFIX + UUID.randomUUID().toString().replace("-", "");
+    private PrescriptionExtraction(String publicId, String ownerKey, String imageKey, Instant createdAt) {
+        this.publicId = publicId;
         this.ownerKey = ownerKey;
         this.imageKey = imageKey;
         this.status = ExtractionStatus.PENDING;
         this.createdAt = createdAt;
     }
 
-    public static PrescriptionExtraction pending(String ownerKey, String imageKey, Instant createdAt) {
-        return new PrescriptionExtraction(ownerKey, imageKey, createdAt);
+    /**
+     * 오브젝트 키를 이 값으로 짓기 위해 저장 전에 미리 발급받을 수 있어야 한다.
+     * 그래야 스토리지에 남은 파일만 보고도 어느 작업 것인지 판별할 수 있다.
+     */
+    public static String newPublicId() {
+        return PUBLIC_ID_PREFIX + UUID.randomUUID().toString().replace("-", "");
+    }
+
+    public static PrescriptionExtraction pending(
+            String publicId, String ownerKey, String imageKey, Instant createdAt) {
+        return new PrescriptionExtraction(publicId, ownerKey, imageKey, createdAt);
     }
 
     public void complete(String resultJson, Instant completedAt) {

@@ -16,7 +16,8 @@ class PrescriptionExtractionTest {
     private static final String RESULT_JSON = "{\"reviewStatus\":\"ready\"}";
 
     private PrescriptionExtraction pendingExtraction() {
-        return PrescriptionExtraction.pending(OWNER, IMAGE_KEY, CREATED_AT);
+        return PrescriptionExtraction.pending(
+                PrescriptionExtraction.newPublicId(), OWNER, IMAGE_KEY, CREATED_AT);
     }
 
     @Test

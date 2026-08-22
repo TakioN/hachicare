@@ -1,6 +1,6 @@
 package com.example.demo.domain.test.controller;
 
-import com.example.demo.domain.test.service.StorageService;
+import com.example.demo.global.storage.StorageService;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.domain.test.dto.SignInRequestDto;

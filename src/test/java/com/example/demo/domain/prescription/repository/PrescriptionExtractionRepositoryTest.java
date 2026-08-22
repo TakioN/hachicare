@@ -25,7 +25,8 @@ class PrescriptionExtractionRepositoryTest {
     private PrescriptionExtractionRepository repository;
 
     private PrescriptionExtraction save(String imageKey, Instant createdAt) {
-        return repository.save(PrescriptionExtraction.pending("session-a", imageKey, createdAt));
+        return repository.save(PrescriptionExtraction.pending(
+                PrescriptionExtraction.newPublicId(), "session-a", imageKey, createdAt));
     }
 
     @Test
