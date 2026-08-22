@@ -43,22 +43,36 @@ public class UpstagePrescriptionAnalyzer implements PrescriptionAnalyzer {
         byte[] content = storageService.download(imageKey);
 
         String fileId = client.uploadFile(content, filename, contentTypeOf(filename));
-        UpstageResponse created = client.createResponse(fileId);
-
-        UpstageResponse finished = awaitCompletion(created);
-        if (finished.isFailed()) {
-            throw new AnalysisFailedException(
-                    ExtractionFailureCode.UPSTREAM_UNAVAILABLE,
-                    "에이전트가 실패로 종료: responseId=" + finished.id());
+        RuntimeException analysisFailure = null;
+        try {
+            UpstageResponse created = client.createResponse(fileId);
+            UpstageResponse finished = awaitCompletion(created);
+            if (finished.isFailed()) {
+                throw new AnalysisFailedException(
+                        ExtractionFailureCode.UPSTREAM_UNAVAILABLE,
+                        "에이전트가 실패로 종료: responseId=" + finished.id());
+            }
+            return responseMapper.toResult(finished.output());
+        } catch (RuntimeException exception) {
+            analysisFailure = exception;
+            throw exception;
+        } finally {
+            try {
+                client.deleteFile(fileId);
+            } catch (RuntimeException cleanupFailure) {
+                if (analysisFailure == null) {
+                    throw cleanupFailure;
+                }
+                analysisFailure.addSuppressed(cleanupFailure);
+            }
         }
-        return responseMapper.toResult(finished.output());
     }
 
     private UpstageResponse awaitCompletion(UpstageResponse created) {
         Instant deadline = Instant.now(clock).plus(properties.pollTimeout());
 
         UpstageResponse current = created;
-        while (!current.isTerminal()) {
+        while (current.isPending()) {
             if (Instant.now(clock).isAfter(deadline)) {
                 throw new AnalysisFailedException(
                         ExtractionFailureCode.UPSTREAM_TIMEOUT,
