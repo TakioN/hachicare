@@ -4,6 +4,8 @@ import java.net.URI;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -40,5 +42,15 @@ public class PrescriptionExtractionController {
                 .accepted()
                 .location(URI.create("/api/v1/prescription-extractions/" + job.id()))
                 .body(ApiResponse.of(job));
+    }
+
+    /** 조회는 세션을 발급하지 않는다. 쿠키가 없으면 소유자일 수 없으므로 그대로 403이 된다. */
+    @GetMapping("/{extractionId}")
+    public ApiResponse<ExtractionJobResponse> get(
+            @PathVariable("extractionId") String extractionId,
+            HttpServletRequest request) {
+
+        String ownerKey = sessionManager.find(request).orElse(null);
+        return ApiResponse.of(extractionService.find(extractionId, ownerKey));
     }
 }

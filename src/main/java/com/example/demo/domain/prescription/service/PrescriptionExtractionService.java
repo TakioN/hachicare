@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.domain.prescription.dto.ExtractionJobResponse;
 import com.example.demo.domain.prescription.entity.PrescriptionExtraction;
 import com.example.demo.domain.prescription.repository.PrescriptionExtractionRepository;
+import com.example.demo.global.exception.CustomException;
+import com.example.demo.global.exception.ErrorCode;
 import com.example.demo.global.storage.StorageService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +26,25 @@ public class PrescriptionExtractionService {
 
     private final PrescriptionExtractionRepository extractionRepository;
     private final PrescriptionImageValidator imageValidator;
+    private final ExtractionJobMapper jobMapper;
     private final StorageService storageService;
     private final Clock clock;
+
+    /**
+     * 조회는 작업을 만든 세션에만 허용한다.
+     * 없는 작업은 404, 남의 작업은 403으로 구분한다.
+     */
+    @Transactional(readOnly = true)
+    public ExtractionJobResponse find(String publicId, String ownerKey) {
+        PrescriptionExtraction extraction = extractionRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new CustomException(ErrorCode.EXTRACTION_NOT_FOUND));
+
+        if (ownerKey == null || !extraction.isOwnedBy(ownerKey)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        return jobMapper.toResponse(extraction);
+    }
 
     /**
      * 동기 구간만 처리한다. 검증 → 원본 업로드 → pending 작업 생성.
@@ -43,7 +62,7 @@ public class PrescriptionExtractionService {
         PrescriptionExtraction extraction = extractionRepository.save(
                 PrescriptionExtraction.pending(publicId, ownerKey, imageKey, Instant.now(clock)));
 
-        return ExtractionJobResponse.from(extraction);
+        return jobMapper.toResponse(extraction);
     }
 
     /**
