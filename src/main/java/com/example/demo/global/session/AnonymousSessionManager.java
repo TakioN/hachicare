@@ -28,7 +28,7 @@ public class AnonymousSessionManager {
 
     private final boolean secureCookie;
 
-    public AnonymousSessionManager(@Value("${app.session.cookie-secure:false}") boolean secureCookie) {
+    public AnonymousSessionManager(@Value("${app.session.cookie-secure:true}") boolean secureCookie) {
         this.secureCookie = secureCookie;
     }
 

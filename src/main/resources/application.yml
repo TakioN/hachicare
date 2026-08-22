@@ -7,3 +7,14 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+app:
+  # stub | upstage (7단계에서 upstage 구현 추가)
+  analyzer: stub
+  session:
+    # 기본은 안전한 쪽. http로 띄우는 프로파일에서만 내린다.
+    cookie-secure: true
+  extraction:
+    # 이 시간을 넘긴 pending은 타임아웃 실패로 확정한다
+    timeout: 2m
+    sweep-interval: 30s

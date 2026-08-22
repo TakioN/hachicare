@@ -3,6 +3,7 @@ package com.example.demo.domain.prescription.service;
 import java.time.Clock;
 import java.time.Instant;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.domain.prescription.dto.ExtractionJobResponse;
 import com.example.demo.domain.prescription.entity.PrescriptionExtraction;
+import com.example.demo.domain.prescription.event.ExtractionRequestedEvent;
 import com.example.demo.domain.prescription.repository.PrescriptionExtractionRepository;
 import com.example.demo.global.exception.CustomException;
 import com.example.demo.global.exception.ErrorCode;
@@ -27,6 +29,7 @@ public class PrescriptionExtractionService {
     private final PrescriptionExtractionRepository extractionRepository;
     private final PrescriptionImageValidator imageValidator;
     private final ExtractionJobMapper jobMapper;
+    private final ApplicationEventPublisher eventPublisher;
     private final StorageService storageService;
     private final Clock clock;
 
@@ -61,6 +64,9 @@ public class PrescriptionExtractionService {
 
         PrescriptionExtraction extraction = extractionRepository.save(
                 PrescriptionExtraction.pending(publicId, ownerKey, imageKey, Instant.now(clock)));
+
+        // 리스너는 AFTER_COMMIT에 받는다. 여기서 바로 넘기면 워커가 아직 없는 작업을 조회하게 된다.
+        eventPublisher.publishEvent(new ExtractionRequestedEvent(publicId));
 
         return jobMapper.toResponse(extraction);
     }

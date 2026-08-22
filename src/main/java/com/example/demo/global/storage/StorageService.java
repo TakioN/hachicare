@@ -66,14 +66,16 @@ public class StorageService {
      * 보상 삭제나 사후 청소처럼 이미 실패 경로에 있는 호출자를 위해 예외를 던지지 않는다.
      * 지우지 못한 오브젝트는 버킷 라이프사이클 정책이 만료시키는 것을 전제로 한다.
      */
-    public void deleteQuietly(String objectKey) {
+    public boolean deleteQuietly(String objectKey) {
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder()
                     .bucket(properties.bucketName())
                     .key(objectKey)
                     .build());
+            return true;
         } catch (SdkException e) {
             log.warn("오브젝트 삭제 실패, 라이프사이클 만료에 맡긴다: key={}", objectKey, e);
+            return false;
         }
     }
 

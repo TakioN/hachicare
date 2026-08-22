@@ -20,11 +20,14 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.domain.prescription.entity.ExtractionStatus;
+import com.example.demo.domain.prescription.event.ExtractionRequestedEvent;
 import com.example.demo.domain.prescription.entity.PrescriptionExtraction;
 import com.example.demo.domain.prescription.repository.PrescriptionExtractionRepository;
 import com.example.demo.global.session.AnonymousSessionManager;
@@ -36,6 +39,7 @@ import jakarta.servlet.http.Cookie;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@RecordApplicationEvents
 class PrescriptionExtractionControllerTest {
 
     private static final String ENDPOINT = "/api/v1/prescription-extractions";
@@ -48,6 +52,9 @@ class PrescriptionExtractionControllerTest {
 
     @MockitoBean
     private StorageService storageService;
+
+    @Autowired
+    private ApplicationEvents events;
 
     @BeforeEach
     void stubUpload() {
@@ -147,6 +154,29 @@ class PrescriptionExtractionControllerTest {
 
         org.mockito.Mockito.verify(storageService, org.mockito.Mockito.never())
                 .upload(any(), anyString());
+    }
+
+    @Test
+    void 작업을_만들면_분석_요청_이벤트를_발행한다() throws Exception {
+        MvcResult result = mockMvc.perform(multipart(ENDPOINT).file(validDocument()))
+                .andExpect(status().isAccepted())
+                .andReturn();
+
+        assertThat(events.stream(ExtractionRequestedEvent.class))
+                .extracting(ExtractionRequestedEvent::publicId)
+                .containsExactly(publicIdFrom(result));
+    }
+
+    @Test
+    void 분석_요청은_커밋_이후에_전달된다() throws Exception {
+        // 커밋 전에 넘기면 워커가 아직 저장되지 않은 작업을 조회해 "없는 작업"으로 처리해버린다.
+        var listener = com.example.demo.domain.prescription.worker.ExtractionWorker.class
+                .getMethod("onExtractionRequested", ExtractionRequestedEvent.class)
+                .getAnnotation(org.springframework.transaction.event.TransactionalEventListener.class);
+
+        assertThat(listener).isNotNull();
+        assertThat(listener.phase())
+                .isEqualTo(org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT);
     }
 
     @Test
