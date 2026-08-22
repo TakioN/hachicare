@@ -16,8 +16,14 @@ public record UpstageResponse(
     String status,
     JsonNode output
 ) {
+    private static final String QUEUED = "queued";
+    private static final String IN_PROGRESS = "in_progress";
     private static final String COMPLETED = "completed";
     private static final String FAILED = "failed";
+
+    public boolean isPending() {
+        return QUEUED.equalsIgnoreCase(status) || IN_PROGRESS.equalsIgnoreCase(status);
+    }
 
     public boolean isCompleted() {
         return COMPLETED.equalsIgnoreCase(status);
@@ -29,5 +35,9 @@ public record UpstageResponse(
 
     public boolean isTerminal() {
         return isCompleted() || isFailed();
+    }
+
+    public boolean hasKnownStatus() {
+        return isPending() || isTerminal();
     }
 }

@@ -1,0 +1,182 @@
+{
+  "clear": {
+    "id": "response-fixture",
+    "status": "completed",
+    "output": [
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "step_2_classify",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "patient_copy_prescription",
+            "additional_values": "{\"document_type\":{\"_value\":\"patient_copy_prescription\",\"confidence_score\":0.92,\"confidence\":\"low\"},\"hierarchy\":{\"leaf\":\"patient_copy_prescription\",\"path\":[\"patient_copy_prescription\"],\"depth\":1}}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Information Extract - prescription_medications",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "{\"medications\": [{\"printed_drug_name\": \"테스트정\", \"printed_product_code\": \"\", \"strength_value\": 10, \"strength_unit\": \"mg\", \"dosage_form\": \"정\", \"dose_value\": 1, \"dose_unit\": \"정\", \"frequency_per_day\": 3, \"duration_days\": 3, \"timing_instruction_ko\": \"매 식후 30분\", \"route\": \"\"}, {\"printed_drug_name\": \"샘플캡슐\", \"printed_product_code\": \"\", \"strength_value\": 20, \"strength_unit\": \"mg\", \"dosage_form\": \"캡슐\", \"dose_value\": 1, \"dose_unit\": \"캡슐\", \"frequency_per_day\": 2, \"duration_days\": 5, \"timing_instruction_ko\": \"매 식후 30분\", \"route\": \"\"}]}",
+            "additional_values": "{\"medications\":[{\"printed_drug_name\":{\"_value\":\"테스트정\",\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[[{\"x\":0.1064,\"y\":0.3989},{\"x\":0.1546,\"y\":0.3987},{\"x\":0.1547,\"y\":0.4084},{\"x\":0.1065,\"y\":0.4087}]],\"confidence_score\":0.9583},\"printed_product_code\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9131},\"strength_value\":{\"_value\":10,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9796},\"strength_unit\":{\"_value\":\"mg\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9799},\"dosage_form\":{\"_value\":\"정\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9788},\"dose_value\":{\"_value\":1,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9833},\"dose_unit\":{\"_value\":\"정\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9726},\"frequency_per_day\":{\"_value\":3,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9627},\"duration_days\":{\"_value\":3,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9476},\"timing_instruction_ko\":{\"_value\":\"매 식후 30분\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[[{\"x\":0.6965,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4191},{\"x\":0.6966,\"y\":0.4191}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.7391,\"y\":0.4094},{\"x\":0.7679,\"y\":0.4093},{\"x\":0.768,\"y\":0.4188},{\"x\":0.7392,\"y\":0.419}]],\"confidence_score\":0.9859},\"route\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9134}},{\"printed_drug_name\":{\"_value\":\"샘플캡슐\",\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[[{\"x\":0.1067,\"y\":0.421},{\"x\":0.1548,\"y\":0.4208},{\"x\":0.1549,\"y\":0.4309},{\"x\":0.1068,\"y\":0.4311}]],\"confidence_score\":0.9581},\"printed_product_code\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9131},\"strength_value\":{\"_value\":20,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9796},\"strength_unit\":{\"_value\":\"mg\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9799},\"dosage_form\":{\"_value\":\"캡슐\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9837},\"dose_value\":{\"_value\":1,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9833},\"dose_unit\":{\"_value\":\"캡슐\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9787},\"frequency_per_day\":{\"_value\":2,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9705},\"duration_days\":{\"_value\":5,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[],\"confidence_score\":0.9476},\"timing_instruction_ko\":{\"_value\":\"매 식후 30분\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[[{\"x\":0.6965,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4191},{\"x\":0.6966,\"y\":0.4191}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.7391,\"y\":0.4094},{\"x\":0.7679,\"y\":0.4093},{\"x\":0.768,\"y\":0.4188},{\"x\":0.7392,\"y\":0.419}]],\"confidence_score\":0.9858},\"route\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9134}}]}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Instruct - Translate timing",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "\"```json\\n{\\\"translations\\\":[{\\\"row_index\\\":0,\\\"timing_instruction_en\\\":\\\"30 minutes after each meal\\\"},{\\\"row_index\\\":1,\\\"timing_instruction_en\\\":\\\"30 minutes after each meal\\\"}]}\\n```\"",
+            "additional_values": "{\"citations\":[{\"index\":1,\"source_type\":\"extract\",\"source_ref\":\"medications[0].timing_instruction_ko\",\"node_index\":0,\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[[{\"x\":0.6965,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4191},{\"x\":0.6966,\"y\":0.4191}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.7391,\"y\":0.4094},{\"x\":0.7679,\"y\":0.4093},{\"x\":0.768,\"y\":0.4188},{\"x\":0.7392,\"y\":0.419}]]},{\"index\":2,\"source_type\":\"extract\",\"source_ref\":\"medications[1].timing_instruction_ko\",\"node_index\":0,\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6644},{\"x\":0.0934,\"y\":0.6644}],\"word_coordinates\":[[{\"x\":0.6965,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4191},{\"x\":0.6966,\"y\":0.4191}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.7391,\"y\":0.4094},{\"x\":0.7679,\"y\":0.4093},{\"x\":0.768,\"y\":0.4188},{\"x\":0.7392,\"y\":0.419}]]}]}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Validate - Validate medication plan",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "\"green\"",
+            "additional_values": "{\"verdict\":\"green\",\"checks\":[{\"name\":\"At least one medication\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Drug name present\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Dose is positive\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Dose unit present\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Frequency is positive\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Duration is positive\",\"severity\":\"warning\",\"passed\":true},{\"name\":\"Timing instruction present\",\"severity\":\"warning\",\"passed\":true}]}"
+          }
+        ]
+      }
+    ]
+  },
+  "review": {
+    "id": "response-fixture",
+    "status": "completed",
+    "output": [
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "step_2_classify",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "patient_copy_prescription",
+            "additional_values": "{\"document_type\":{\"_value\":\"patient_copy_prescription\",\"confidence_score\":0.93,\"confidence\":\"low\"},\"hierarchy\":{\"leaf\":\"patient_copy_prescription\",\"path\":[\"patient_copy_prescription\"],\"depth\":1}}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Information Extract - prescription_medications",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "{\"medications\": [{\"printed_drug_name\": \"테스트정\", \"printed_product_code\": \"\", \"strength_value\": 10, \"strength_unit\": \"mg\", \"dosage_form\": \"정\", \"dose_value\": 1, \"dose_unit\": \"정\", \"frequency_per_day\": 3, \"duration_days\": 0, \"timing_instruction_ko\": \"매 식후 30분\", \"route\": \"\"}, {\"printed_drug_name\": \"샘플캡슐\", \"printed_product_code\": \"\", \"strength_value\": 20, \"strength_unit\": \"mg\", \"dosage_form\": \"캡슐\", \"dose_value\": 1, \"dose_unit\": \"캡슐\", \"frequency_per_day\": 2, \"duration_days\": 5, \"timing_instruction_ko\": \"매 식후 30분\", \"route\": \"\"}]}",
+            "additional_values": "{\"medications\":[{\"printed_drug_name\":{\"_value\":\"테스트정\",\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[[{\"x\":0.1064,\"y\":0.3989},{\"x\":0.1546,\"y\":0.3987},{\"x\":0.1547,\"y\":0.4084},{\"x\":0.1065,\"y\":0.4087}]],\"confidence_score\":0.9583},\"printed_product_code\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9131},\"strength_value\":{\"_value\":10,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9796},\"strength_unit\":{\"_value\":\"mg\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9798},\"dosage_form\":{\"_value\":\"정\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9788},\"dose_value\":{\"_value\":1,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9833},\"dose_unit\":{\"_value\":\"정\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9726},\"frequency_per_day\":{\"_value\":3,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9627},\"duration_days\":{\"_value\":0,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0981,\"y\":0.0705},{\"x\":0.4973,\"y\":0.0705},{\"x\":0.4973,\"y\":0.0839},{\"x\":0.0981,\"y\":0.0839}],\"word_coordinates\":[],\"confidence_score\":0.9476},\"timing_instruction_ko\":{\"_value\":\"매 식후 30분\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[[{\"x\":0.6966,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4191},{\"x\":0.6967,\"y\":0.4191}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.7391,\"y\":0.4094},{\"x\":0.768,\"y\":0.4093},{\"x\":0.7681,\"y\":0.4188},{\"x\":0.7392,\"y\":0.4189}]],\"confidence_score\":0.9859},\"route\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9134}},{\"printed_drug_name\":{\"_value\":\"샘플캡슐\",\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[[{\"x\":0.1067,\"y\":0.421},{\"x\":0.1548,\"y\":0.4208},{\"x\":0.1549,\"y\":0.4309},{\"x\":0.1068,\"y\":0.4311}]],\"confidence_score\":0.9582},\"printed_product_code\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9131},\"strength_value\":{\"_value\":20,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9796},\"strength_unit\":{\"_value\":\"mg\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9799},\"dosage_form\":{\"_value\":\"캡슐\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9838},\"dose_value\":{\"_value\":1,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9833},\"dose_unit\":{\"_value\":\"캡슐\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9787},\"frequency_per_day\":{\"_value\":2,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[],\"confidence_score\":0.9706},\"duration_days\":{\"_value\":5,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[[{\"x\":0.529,\"y\":0.4213},{\"x\":0.5484,\"y\":0.4212},{\"x\":0.5485,\"y\":0.4309},{\"x\":0.5291,\"y\":0.431}]],\"confidence_score\":0.9476},\"timing_instruction_ko\":{\"_value\":\"매 식후 30분\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[[{\"x\":0.6966,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4191},{\"x\":0.6967,\"y\":0.4191}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.7391,\"y\":0.4094},{\"x\":0.768,\"y\":0.4093},{\"x\":0.7681,\"y\":0.4188},{\"x\":0.7392,\"y\":0.4189}]],\"confidence_score\":0.9858},\"route\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9134}}]}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Instruct - Translate timing",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "\"{\\\"translations\\\":[{\\\"row_index\\\":0,\\\"timing_instruction_en\\\":\\\"30 minutes after each meal\\\"【†1】},{\\\"row_index\\\":1,\\\"timing_instruction_en\\\":\\\"30 minutes after each meal\\\"【†2】}]}\"",
+            "additional_values": "{\"citations\":[{\"index\":1,\"source_type\":\"extract\",\"source_ref\":\"medications[0].timing_instruction_ko\",\"node_index\":0,\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[[{\"x\":0.6966,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4191},{\"x\":0.6967,\"y\":0.4191}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.7391,\"y\":0.4094},{\"x\":0.768,\"y\":0.4093},{\"x\":0.7681,\"y\":0.4188},{\"x\":0.7392,\"y\":0.4189}]]},{\"index\":2,\"source_type\":\"extract\",\"source_ref\":\"medications[1].timing_instruction_ko\",\"node_index\":0,\"page\":1,\"coordinates\":[{\"x\":0.0934,\"y\":0.34},{\"x\":0.8835,\"y\":0.34},{\"x\":0.8835,\"y\":0.6645},{\"x\":0.0934,\"y\":0.6645}],\"word_coordinates\":[[{\"x\":0.6966,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4191},{\"x\":0.6967,\"y\":0.4191}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.7391,\"y\":0.4094},{\"x\":0.768,\"y\":0.4093},{\"x\":0.7681,\"y\":0.4188},{\"x\":0.7392,\"y\":0.4189}]]}]}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Validate - Validate medication plan",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "\"yellow\"",
+            "additional_values": "{\"verdict\":\"yellow\",\"checks\":[{\"name\":\"At least one medication\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Drug name present\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Dose is positive\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Dose unit present\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Frequency is positive\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Duration is positive\",\"severity\":\"warning\",\"passed\":false},{\"name\":\"Timing instruction present\",\"severity\":\"warning\",\"passed\":true}]}"
+          }
+        ]
+      }
+    ]
+  },
+  "retake": {
+    "id": "response-fixture",
+    "status": "completed",
+    "output": [
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "step_2_classify",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "patient_copy_prescription",
+            "additional_values": "{\"document_type\":{\"_value\":\"patient_copy_prescription\",\"confidence_score\":0.95,\"confidence\":\"high\"},\"hierarchy\":{\"leaf\":\"patient_copy_prescription\",\"path\":[\"patient_copy_prescription\"],\"depth\":1}}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Information Extract - prescription_medications",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "{\"medications\": [{\"printed_drug_name\": \"테스트정\", \"printed_product_code\": \"\", \"strength_value\": 10, \"strength_unit\": \"mg\", \"dosage_form\": \"정\", \"dose_value\": 0, \"dose_unit\": \"\", \"frequency_per_day\": 0, \"duration_days\": 0, \"timing_instruction_ko\": \"매 식후 30분\", \"route\": \"\"}, {\"printed_drug_name\": \"샘플캡슐\", \"printed_product_code\": \"\", \"strength_value\": 20, \"strength_unit\": \"mg\", \"dosage_form\": \"캡슐\", \"dose_value\": 0, \"dose_unit\": \"\", \"frequency_per_day\": 0, \"duration_days\": 0, \"timing_instruction_ko\": \"매 식후 30분\", \"route\": \"\"}]}",
+            "additional_values": "{\"medications\":[{\"printed_drug_name\":{\"_value\":\"테스트정\",\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[[{\"x\":0.1065,\"y\":0.3989},{\"x\":0.1546,\"y\":0.3987},{\"x\":0.1547,\"y\":0.4084},{\"x\":0.1065,\"y\":0.4087}]],\"confidence_score\":0.9274},\"printed_product_code\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.948},\"strength_value\":{\"_value\":10,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[],\"confidence_score\":0.9687},\"strength_unit\":{\"_value\":\"mg\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[],\"confidence_score\":0.9802},\"dosage_form\":{\"_value\":\"정\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[],\"confidence_score\":0.9738},\"dose_value\":{\"_value\":0,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0981,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0838},{\"x\":0.0981,\"y\":0.0838}],\"word_coordinates\":[],\"confidence_score\":0.9681},\"dose_unit\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9541},\"frequency_per_day\":{\"_value\":0,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0981,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0838},{\"x\":0.0981,\"y\":0.0838}],\"word_coordinates\":[],\"confidence_score\":0.9675},\"duration_days\":{\"_value\":0,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0981,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0838},{\"x\":0.0981,\"y\":0.0838}],\"word_coordinates\":[],\"confidence_score\":0.9522},\"timing_instruction_ko\":{\"_value\":\"매 식후 30분\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[[{\"x\":0.6965,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4189},{\"x\":0.6967,\"y\":0.419}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.739,\"y\":0.4094},{\"x\":0.768,\"y\":0.4093},{\"x\":0.7681,\"y\":0.4189},{\"x\":0.7391,\"y\":0.419}]],\"confidence_score\":0.9745},\"route\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9467}},{\"printed_drug_name\":{\"_value\":\"샘플캡슐\",\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[[{\"x\":0.1067,\"y\":0.421},{\"x\":0.1548,\"y\":0.4208},{\"x\":0.1549,\"y\":0.431},{\"x\":0.1068,\"y\":0.4311}]],\"confidence_score\":0.9267},\"printed_product_code\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.948},\"strength_value\":{\"_value\":20,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[],\"confidence_score\":0.9688},\"strength_unit\":{\"_value\":\"mg\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[],\"confidence_score\":0.9802},\"dosage_form\":{\"_value\":\"캡슐\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[],\"confidence_score\":0.9778},\"dose_value\":{\"_value\":0,\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0981,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0838},{\"x\":0.0981,\"y\":0.0838}],\"word_coordinates\":[],\"confidence_score\":0.9681},\"dose_unit\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9541},\"frequency_per_day\":{\"_value\":0,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0981,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0838},{\"x\":0.0981,\"y\":0.0838}],\"word_coordinates\":[],\"confidence_score\":0.9675},\"duration_days\":{\"_value\":0,\"confidence\":\"low\",\"page\":1,\"coordinates\":[{\"x\":0.0981,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0706},{\"x\":0.4973,\"y\":0.0838},{\"x\":0.0981,\"y\":0.0838}],\"word_coordinates\":[],\"confidence_score\":0.9522},\"timing_instruction_ko\":{\"_value\":\"매 식후 30분\",\"confidence\":\"high\",\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[[{\"x\":0.6965,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4189},{\"x\":0.6967,\"y\":0.419}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.739,\"y\":0.4094},{\"x\":0.768,\"y\":0.4093},{\"x\":0.7681,\"y\":0.4189},{\"x\":0.7391,\"y\":0.419}]],\"confidence_score\":0.9745},\"route\":{\"_value\":\"\",\"confidence\":\"low\",\"page\":-1,\"coordinates\":[],\"word_coordinates\":[],\"confidence_score\":0.9467}}]}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Instruct - Translate timing",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "\"{\\\"translations\\\":[{\\\"row_index\\\":0,\\\"timing_instruction_en\\\":\\\"30 minutes after each meal\\\"【†1】},{\\\"row_index\\\":1,\\\"timing_instruction_en\\\":\\\"30 minutes after each meal\\\"【†2】}]}\"",
+            "additional_values": "{\"citations\":[{\"index\":1,\"source_type\":\"extract\",\"source_ref\":\"medications[0].timing_instruction_ko\",\"node_index\":0,\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[[{\"x\":0.6965,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4189},{\"x\":0.6967,\"y\":0.419}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.739,\"y\":0.4094},{\"x\":0.768,\"y\":0.4093},{\"x\":0.7681,\"y\":0.4189},{\"x\":0.7391,\"y\":0.419}]]},{\"index\":2,\"source_type\":\"extract\",\"source_ref\":\"medications[1].timing_instruction_ko\",\"node_index\":0,\"page\":1,\"coordinates\":[{\"x\":0.0936,\"y\":0.3403},{\"x\":0.883,\"y\":0.3403},{\"x\":0.883,\"y\":0.8096},{\"x\":0.0936,\"y\":0.8096}],\"word_coordinates\":[[{\"x\":0.6965,\"y\":0.4092},{\"x\":0.7088,\"y\":0.4092},{\"x\":0.7089,\"y\":0.4189},{\"x\":0.6967,\"y\":0.419}],[{\"x\":0.7122,\"y\":0.4091},{\"x\":0.7365,\"y\":0.409},{\"x\":0.7365,\"y\":0.4191},{\"x\":0.7123,\"y\":0.4192}],[{\"x\":0.739,\"y\":0.4094},{\"x\":0.768,\"y\":0.4093},{\"x\":0.7681,\"y\":0.4189},{\"x\":0.7391,\"y\":0.419}]]}]}"
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "Validate - Validate medication plan",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "\"red\"",
+            "additional_values": "{\"verdict\":\"red\",\"checks\":[{\"name\":\"At least one medication\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Drug name present\",\"severity\":\"error\",\"passed\":true},{\"name\":\"Dose is positive\",\"severity\":\"error\",\"passed\":false},{\"name\":\"Dose unit present\",\"severity\":\"error\",\"passed\":false},{\"name\":\"Frequency is positive\",\"severity\":\"error\",\"passed\":false},{\"name\":\"Duration is positive\",\"severity\":\"warning\",\"passed\":false},{\"name\":\"Timing instruction present\",\"severity\":\"warning\",\"passed\":true}]}"
+          }
+        ]
+      }
+    ]
+  },
+  "unsupported": {
+    "id": "response-fixture",
+    "status": "completed",
+    "output": [
+      {
+        "type": "message",
+        "status": "completed",
+        "model": "step_2_classify",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "other",
+            "additional_values": "{\"document_type\":{\"_value\":\"other\",\"confidence_score\":0.99,\"confidence\":\"high\"},\"hierarchy\":{\"leaf\":\"other\",\"path\":[\"other\"],\"depth\":1}}"
+          }
+        ]
+      }
+    ]
+  }
+}

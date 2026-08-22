@@ -33,7 +33,9 @@ app:
 
 upstage:
   base-url: https://api.upstage.ai/v2
-  # api-key와 agent-id는 프로파일별 yml에 둔다
+  api-key: ${API_KEY:}
+  agent-id: ${AGENT_ID:}
+  # Secrets are injected by the runtime environment.
   request-timeout: 15s
   poll-interval: 2s
   # 이 시간을 넘기면 upstream_timeout. app.extraction.timeout보다 짧아야 한다.

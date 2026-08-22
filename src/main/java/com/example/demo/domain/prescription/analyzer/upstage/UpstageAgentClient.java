@@ -74,8 +74,7 @@ public class UpstageAgentClient {
                         "content", List.of(Map.of(
                                 "type", "input_file",
                                 "file_id", fileId)))),
-                // 마지막 단계 출력만 받는다. all이면 중간 단계 원문까지 딸려온다.
-                "include", List.of("last"));
+                "include", List.of("all"));
 
         return requireResponse(exchange("에이전트 실행", () -> restClient.post()
                 .uri("/responses")
@@ -87,15 +86,32 @@ public class UpstageAgentClient {
 
     public UpstageResponse getResponse(String responseId) {
         return requireResponse(exchange("작업 조회", () -> restClient.get()
-                .uri("/responses/{id}", responseId)
+                .uri(uriBuilder -> uriBuilder
+                        .path("/responses/{id}")
+                        .queryParam("include[]", "all")
+                        .build(responseId))
                 .retrieve()
                 .body(UpstageResponse.class)));
+    }
+
+    public void deleteFile(String fileId) {
+        exchange("파일 삭제", () -> {
+            restClient.delete()
+                    .uri("/files/{id}", fileId)
+                    .retrieve()
+                    .toBodilessEntity();
+            return null;
+        });
     }
 
     private static UpstageResponse requireResponse(UpstageResponse response) {
         if (response == null || response.id() == null || response.status() == null) {
             throw new AnalysisFailedException(
                     ExtractionFailureCode.INVALID_AGENT_RESPONSE, "작업 응답에 id나 status가 없음");
+        }
+        if (!response.hasKnownStatus()) {
+            throw new AnalysisFailedException(
+                    ExtractionFailureCode.INVALID_AGENT_RESPONSE, "알 수 없는 작업 상태");
         }
         return response;
     }
