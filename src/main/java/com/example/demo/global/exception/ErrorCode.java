@@ -19,6 +19,14 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "forbidden", "접근 권한이 없습니다."),
     EXTRACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "extraction_not_found", "존재하지 않는 작업입니다."),
 
+    // 인증
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "unauthorized", "로그인이 필요합니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "token_expired", "인증이 만료되었습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "invalid_token", "유효하지 않은 인증입니다."),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "invalid_credentials", "이메일 또는 비밀번호가 올바르지 않습니다."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "email_already_exists", "이미 가입된 이메일입니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "user_not_found", "존재하지 않는 사용자입니다."),
+
     // 공통
     FILE_STORAGE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "file_storage_error", "파일 저장에 실패했습니다."),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "internal_error", "서버 내부 오류가 발생했습니다."),

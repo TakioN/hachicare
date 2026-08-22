@@ -1,30 +1,27 @@
 package com.example.demo.domain.prescription.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.Instant;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.domain.prescription.entity.ExtractionFailureCode;
 import com.example.demo.domain.prescription.entity.PrescriptionExtraction;
 import com.example.demo.domain.prescription.repository.PrescriptionExtractionRepository;
-import com.example.demo.global.session.AnonymousSessionManager;
 import com.example.demo.support.TestResults;
+import com.example.demo.support.TestUsers;
 
 import tools.jackson.databind.ObjectMapper;
-
-import jakarta.servlet.http.Cookie;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,7 +29,6 @@ import jakarta.servlet.http.Cookie;
 class PrescriptionExtractionQueryControllerTest {
 
     private static final String ENDPOINT = "/api/v1/prescription-extractions";
-    private static final String OWNER = "owner-session";
     private static final Instant CREATED_AT = Instant.parse("2026-08-22T10:00:00Z");
     private static final Instant COMPLETED_AT = Instant.parse("2026-08-22T10:00:04Z");
     private static final String RESULT_JSON = """
@@ -48,20 +44,30 @@ class PrescriptionExtractionQueryControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private PrescriptionExtraction savePending() {
-        return extractionRepository.save(PrescriptionExtraction.pending(
-                PrescriptionExtraction.newPublicId(), OWNER, "prescriptions/x.png", CREATED_AT));
+    @Autowired
+    private TestUsers testUsers;
+
+    private String owner;
+    private String authorization;
+
+    @BeforeEach
+    void signIn() {
+        var user = testUsers.create("owner@example.com");
+        owner = user.getPublicId();
+        authorization = testUsers.bearerFor(owner);
     }
 
-    private static Cookie ownerCookie(String value) {
-        return new Cookie(AnonymousSessionManager.COOKIE_NAME, value);
+    private PrescriptionExtraction savePending() {
+        return extractionRepository.save(PrescriptionExtraction.pending(
+                PrescriptionExtraction.newPublicId(), owner, "prescriptions/x.png", CREATED_AT));
     }
+
 
     @Test
     void pending_작업은_결과도_실패도_완료시각도_없이_돌아온다() throws Exception {
         PrescriptionExtraction extraction = savePending();
 
-        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).cookie(ownerCookie(OWNER)))
+        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).header(HttpHeaders.AUTHORIZATION, authorization))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(extraction.getPublicId()))
                 .andExpect(jsonPath("$.data.status").value("pending"))
@@ -76,7 +82,7 @@ class PrescriptionExtractionQueryControllerTest {
         PrescriptionExtraction extraction = savePending();
         extraction.complete(RESULT_JSON, COMPLETED_AT);
 
-        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).cookie(ownerCookie(OWNER)))
+        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).header(HttpHeaders.AUTHORIZATION, authorization))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("completed"))
                 .andExpect(jsonPath("$.data.completedAt").value("2026-08-22T10:00:04Z"))
@@ -92,7 +98,7 @@ class PrescriptionExtractionQueryControllerTest {
         PrescriptionExtraction extraction = savePending();
         extraction.fail(ExtractionFailureCode.UPSTREAM_UNAVAILABLE, COMPLETED_AT);
 
-        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).cookie(ownerCookie(OWNER)))
+        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).header(HttpHeaders.AUTHORIZATION, authorization))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("failed"))
                 .andExpect(jsonPath("$.data.completedAt").value("2026-08-22T10:00:04Z"))
@@ -106,7 +112,7 @@ class PrescriptionExtractionQueryControllerTest {
         PrescriptionExtraction extraction = savePending();
         extraction.complete(objectMapper.writeValueAsString(TestResults.valid()), COMPLETED_AT);
 
-        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).cookie(ownerCookie(OWNER)))
+        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).header(HttpHeaders.AUTHORIZATION, authorization))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.result.reviewStatus").value("ready"))
                 .andExpect(jsonPath("$.data.result.medications[0].id").value("med_1"))
@@ -127,48 +133,27 @@ class PrescriptionExtractionQueryControllerTest {
         PrescriptionExtraction extraction = savePending();
 
         mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId())
-                        .cookie(ownerCookie("someone-else")))
+                        .header(HttpHeaders.AUTHORIZATION, testUsers.createAndAuthorize("other@example.com")))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error.code").value("forbidden"))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
-    @Test
-    void 세션_쿠키가_없으면_403_forbidden() throws Exception {
-        PrescriptionExtraction extraction = savePending();
-
-        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.error.code").value("forbidden"));
-    }
 
     @Test
     void 존재하지_않는_작업은_404_extraction_not_found() throws Exception {
-        mockMvc.perform(get(ENDPOINT + "/ext_doesnotexist").cookie(ownerCookie(OWNER)))
+        mockMvc.perform(get(ENDPOINT + "/ext_doesnotexist").header(HttpHeaders.AUTHORIZATION, authorization))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error.code").value("extraction_not_found"));
     }
 
     @Test
-    void 조회는_세션을_새로_발급하지_않는다() throws Exception {
+    void 인증_없이_조회하면_401() throws Exception {
         PrescriptionExtraction extraction = savePending();
 
-        MvcResult result = mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId())
-                        .cookie(ownerCookie(OWNER)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        assertThat(result.getResponse().getHeaders(HttpHeaders.SET_COOKIE)).isEmpty();
+        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("unauthorized"));
     }
 
-    @Test
-    void 쿠키가_없는_조회도_세션을_발급하지_않는다() throws Exception {
-        PrescriptionExtraction extraction = savePending();
-
-        MvcResult result = mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()))
-                .andExpect(status().isForbidden())
-                .andReturn();
-
-        assertThat(result.getResponse().getHeaders(HttpHeaders.SET_COOKIE)).isEmpty();
-    }
 }

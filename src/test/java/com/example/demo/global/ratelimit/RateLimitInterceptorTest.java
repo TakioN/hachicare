@@ -25,11 +25,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.global.session.AnonymousSessionManager;
 import com.example.demo.global.storage.StorageService;
 import com.example.demo.support.TestImages;
-
-import jakarta.servlet.http.Cookie;
+import com.example.demo.support.TestUsers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -53,6 +51,9 @@ class RateLimitInterceptorTest {
     @MockitoBean
     private StorageService storageService;
 
+    @Autowired
+    private TestUsers testUsers;
+
     @BeforeEach
     void reset() {
         Set<String> keys = redisTemplate.keys("rate:extraction:*");
@@ -67,12 +68,15 @@ class RateLimitInterceptorTest {
         return new MockMultipartFile("document", "p.png", "image/png", TestImages.png());
     }
 
-    private MvcResult upload(String sessionKey) throws Exception {
-        var request = multipart(ENDPOINT).file(validDocument());
-        if (sessionKey != null) {
-            request = request.cookie(new Cookie(AnonymousSessionManager.COOKIE_NAME, sessionKey));
-        }
-        return mockMvc.perform(request).andReturn();
+    private final java.util.Map<String, String> tokensByLabel = new java.util.HashMap<>();
+
+    /** 같은 라벨이면 같은 사용자로 요청한다. */
+    private MvcResult upload(String label) throws Exception {
+        String authorization = tokensByLabel.computeIfAbsent(
+                label, l -> testUsers.createAndAuthorize(l + "@example.com"));
+        return mockMvc.perform(multipart(ENDPOINT).file(validDocument())
+                        .header(org.springframework.http.HttpHeaders.AUTHORIZATION, authorization))
+                .andReturn();
     }
 
     @Test
@@ -80,9 +84,9 @@ class RateLimitInterceptorTest {
         assertThat(upload("session-a").getResponse().getStatus()).isEqualTo(202);
         assertThat(upload("session-a").getResponse().getStatus()).isEqualTo(202);
 
-        mockMvc.perform(multipart(ENDPOINT)
-                        .file(validDocument())
-                        .cookie(new Cookie(AnonymousSessionManager.COOKIE_NAME, "session-a")))
+        mockMvc.perform(multipart(ENDPOINT).file(validDocument())
+                        .header(org.springframework.http.HttpHeaders.AUTHORIZATION,
+                                tokensByLabel.get("session-a")))
                 .andExpect(status().isTooManyRequests())
                 .andExpect(jsonPath("$.error.code").value("rate_limit_exceeded"))
                 .andExpect(jsonPath("$.data").doesNotExist());
@@ -111,8 +115,8 @@ class RateLimitInterceptorTest {
     }
 
     @Test
-    void 쿠키를_버려도_IP_한도에는_걸린다() throws Exception {
-        // 매번 새 세션이라 세션 한도(2)는 안 걸리지만 IP 한도(3)는 누적된다
+    void 계정을_바꿔도_IP_한도에는_걸린다() throws Exception {
+        // 매번 새 계정이라 사용자 한도(2)는 안 걸리지만 IP 한도(3)는 누적된다
         assertThat(upload("fresh-1").getResponse().getStatus()).isEqualTo(202);
         assertThat(upload("fresh-2").getResponse().getStatus()).isEqualTo(202);
         assertThat(upload("fresh-3").getResponse().getStatus()).isEqualTo(202);
@@ -129,7 +133,8 @@ class RateLimitInterceptorTest {
 
         // 폴링은 정상 동작이므로 막지 않는다. 남의 작업이라 403이지만 429는 아니다.
         mockMvc.perform(get(ENDPOINT + "/ext_something")
-                        .cookie(new Cookie(AnonymousSessionManager.COOKIE_NAME, "session-e")))
+                        .header(org.springframework.http.HttpHeaders.AUTHORIZATION,
+                                tokensByLabel.get("session-e")))
                 .andExpect(status().isNotFound());
     }
 }

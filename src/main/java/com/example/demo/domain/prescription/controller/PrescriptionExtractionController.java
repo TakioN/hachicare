@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,28 +16,26 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.domain.prescription.dto.ExtractionJobResponse;
 import com.example.demo.domain.prescription.service.PrescriptionExtractionService;
 import com.example.demo.global.response.ApiResponse;
-import com.example.demo.global.session.AnonymousSessionManager;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 인증이 필요한 경로다. 미인증 요청은 필터에서 401로 끝나므로 여기까지 오지 않는다.
+ * principal은 사용자 공개 식별자이고, 그대로 작업의 소유자가 된다.
+ */
 @RestController
 @RequestMapping("/api/v1/prescription-extractions")
 @RequiredArgsConstructor
 public class PrescriptionExtractionController {
 
     private final PrescriptionExtractionService extractionService;
-    private final AnonymousSessionManager sessionManager;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ExtractionJobResponse>> create(
             @RequestPart("document") MultipartFile document,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+            @AuthenticationPrincipal String userPublicId) {
 
-        String ownerKey = sessionManager.resolveOrIssue(request, response);
-        ExtractionJobResponse job = extractionService.create(document, ownerKey);
+        ExtractionJobResponse job = extractionService.create(document, userPublicId);
 
         return ResponseEntity
                 .accepted()
@@ -44,13 +43,11 @@ public class PrescriptionExtractionController {
                 .body(ApiResponse.of(job));
     }
 
-    /** 조회는 세션을 발급하지 않는다. 쿠키가 없으면 소유자일 수 없으므로 그대로 403이 된다. */
     @GetMapping("/{extractionId}")
     public ApiResponse<ExtractionJobResponse> get(
             @PathVariable("extractionId") String extractionId,
-            HttpServletRequest request) {
+            @AuthenticationPrincipal String userPublicId) {
 
-        String ownerKey = sessionManager.find(request).orElse(null);
-        return ApiResponse.of(extractionService.find(extractionId, ownerKey));
+        return ApiResponse.of(extractionService.find(extractionId, userPublicId));
     }
 }

@@ -28,12 +28,10 @@ app:
 
 upstage:
   base-url: https://api.upstage.ai/v2
-  # api-key와 agent-id는 프로파일별 yml에 둔다
+  api-key: ${API_KEY:}
+  agent-id: ${AGENT_ID:}
+  # Secrets are injected by the runtime environment.
   request-timeout: 15s
   poll-interval: 2s
   # 이 시간을 넘기면 upstream_timeout. app.extraction.timeout보다 짧아야 한다.
   poll-timeout: 90s
-  # all | last. 결과가 마지막 단계가 아닌 곳에 담길 수 있어 기본은 all.
-  include-steps: all
-  # 비우면 끔. 켜면 업스트림 원본 응답을 그대로 파일로 남긴다(처방전 내용 포함, 진단용).
-  raw-response-dump-dir: ""
