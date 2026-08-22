@@ -25,6 +25,8 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation "com.oracle.oci.sdk:oci-java-sdk-objectstorage:3.94.2"
+    implementation 'software.amazon.awssdk:s3:2.53.3'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
