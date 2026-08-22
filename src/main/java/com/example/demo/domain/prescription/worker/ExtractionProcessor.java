@@ -12,13 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.domain.prescription.analyzer.AnalysisFailedException;
+import com.example.demo.domain.prescription.analyzer.ExtractionResultValidator;
 import com.example.demo.domain.prescription.analyzer.PrescriptionAnalyzer;
+import com.example.demo.domain.prescription.dto.result.PrescriptionExtractionResult;
 import com.example.demo.domain.prescription.entity.ExtractionFailureCode;
 import com.example.demo.domain.prescription.entity.ExtractionStatus;
 import com.example.demo.domain.prescription.entity.PrescriptionExtraction;
 import com.example.demo.domain.prescription.repository.PrescriptionExtractionRepository;
 
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,6 +37,8 @@ public class ExtractionProcessor {
 
     private final PrescriptionExtractionRepository extractionRepository;
     private final PrescriptionAnalyzer analyzer;
+    private final ExtractionResultValidator resultValidator;
+    private final ObjectMapper objectMapper;
     private final Clock clock;
 
     /**
@@ -53,8 +58,10 @@ public class ExtractionProcessor {
         }
 
         try {
-            String resultJson = analyzer.analyze(extraction.getImageKey());
-            extraction.complete(resultJson, Instant.now(clock));
+            PrescriptionExtractionResult result = analyzer.analyze(extraction.getImageKey());
+            // 업스트림이 무엇을 주든 우리 계약을 지키는지는 여기서 확인한다.
+            resultValidator.validate(result);
+            extraction.complete(objectMapper.writeValueAsString(result), Instant.now(clock));
 
         } catch (AnalysisFailedException e) {
             log.warn("분석 실패: id={} code={}", publicId, e.getFailureCode(), e);

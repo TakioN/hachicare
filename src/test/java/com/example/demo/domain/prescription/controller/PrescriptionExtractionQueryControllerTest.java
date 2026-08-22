@@ -20,6 +20,9 @@ import com.example.demo.domain.prescription.entity.ExtractionFailureCode;
 import com.example.demo.domain.prescription.entity.PrescriptionExtraction;
 import com.example.demo.domain.prescription.repository.PrescriptionExtractionRepository;
 import com.example.demo.global.session.AnonymousSessionManager;
+import com.example.demo.support.TestResults;
+
+import tools.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.Cookie;
 
@@ -41,6 +44,9 @@ class PrescriptionExtractionQueryControllerTest {
 
     @Autowired
     private PrescriptionExtractionRepository extractionRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private PrescriptionExtraction savePending() {
         return extractionRepository.save(PrescriptionExtraction.pending(
@@ -93,6 +99,27 @@ class PrescriptionExtractionQueryControllerTest {
                 .andExpect(jsonPath("$.data.failure.code").value("upstream_unavailable"))
                 .andExpect(jsonPath("$.data.failure.message").value("처방전을 분석하지 못했습니다."))
                 .andExpect(jsonPath("$.data.result").doesNotExist());
+    }
+
+    @Test
+    void 저장했다_읽어도_결과_구조가_그대로다() throws Exception {
+        PrescriptionExtraction extraction = savePending();
+        extraction.complete(objectMapper.writeValueAsString(TestResults.valid()), COMPLETED_AT);
+
+        mockMvc.perform(get(ENDPOINT + "/" + extraction.getPublicId()).cookie(ownerCookie(OWNER)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.result.reviewStatus").value("ready"))
+                .andExpect(jsonPath("$.data.result.medications[0].id").value("med_1"))
+                .andExpect(jsonPath("$.data.result.medications[0].drugName.status").value("extracted"))
+                .andExpect(jsonPath("$.data.result.medications[0].drugName.confidence").value("high"))
+                .andExpect(jsonPath("$.data.result.medications[0].dose.value.unit").value("정"))
+                .andExpect(jsonPath("$.data.result.medications[0].dose.value.rawText").value("1정"))
+                .andExpect(jsonPath("$.data.result.medications[0].frequencyPerDay.value").value(1))
+                .andExpect(jsonPath("$.data.result.medications[0].timingInstruction.english")
+                        .value("30 minutes after breakfast"))
+                // 값이 없는 선택 필드는 응답에 아예 나오지 않아야 한다
+                .andExpect(jsonPath("$.data.result.medications[0].route").doesNotExist())
+                .andExpect(jsonPath("$.data.result.medications[0].drugName.evidence").doesNotExist());
     }
 
     @Test

@@ -3,9 +3,8 @@ package com.example.demo.domain.prescription.dto;
 import java.time.Instant;
 
 import com.example.demo.domain.prescription.entity.ExtractionStatus;
+import com.example.demo.domain.prescription.dto.result.PrescriptionExtractionResult;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import tools.jackson.databind.JsonNode;
 
 /**
  * 작업 조회 응답.
@@ -14,7 +13,6 @@ import tools.jackson.databind.JsonNode;
  * "pending에는 result/failure/completedAt이 없다", "result와 failure는 동시에 없다"는
  * 문서의 불변조건이 응답에서도 그대로 드러난다.
  *
- * <p>result는 저장된 JSON을 그대로 싣는다. 결과 스키마는 7단계에서 타입으로 굳힌다.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ExtractionJobResponse(
@@ -22,7 +20,7 @@ public record ExtractionJobResponse(
     ExtractionStatus status,
     Instant createdAt,
     Instant completedAt,
-    JsonNode result,
+    PrescriptionExtractionResult result,
     ExtractionFailureResponse failure
 ) {
 }
