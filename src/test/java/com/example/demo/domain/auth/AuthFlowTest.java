@@ -83,11 +83,22 @@ class AuthFlowTest {
     }
 
     @Test
-    void 로그인하면_두_토큰을_받는다() throws Exception {
+    void 로그인하면_두_토큰과_이메일을_받는다() throws Exception {
         JsonNode tokens = signUpAndSignIn();
 
         assertThat(tokens.get("accessToken").stringValue()).isNotBlank();
         assertThat(tokens.get("refreshToken").stringValue()).isNotBlank();
+        assertThat(tokens.get("email").stringValue()).isEqualTo(EMAIL);
+    }
+
+    @Test
+    void 재발급_응답에는_이메일이_없다() throws Exception {
+        // 재발급은 Redis와 토큰만으로 처리한다. 이메일을 실으려면 사용자 조회가 더 필요하다.
+        JsonNode tokens = signUpAndSignIn();
+        MvcResult refreshed = postJson("/api/refresh",
+                "{\"refreshToken\":\"" + tokens.get("refreshToken").stringValue() + "\"}");
+
+        assertThat(tokensFrom(refreshed).has("email")).isFalse();
     }
 
     @Test

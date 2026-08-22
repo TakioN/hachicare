@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.auth.dto.RefreshRequest;
 import com.example.demo.domain.auth.dto.SignInRequest;
+import com.example.demo.domain.auth.dto.SignInResponse;
 import com.example.demo.domain.auth.dto.SignUpRequest;
 import com.example.demo.domain.auth.dto.TokenResponse;
 import com.example.demo.domain.auth.service.AuthService;
@@ -31,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ApiResponse<TokenResponse> signIn(@RequestBody SignInRequest request) {
+    public ApiResponse<SignInResponse> signIn(@RequestBody SignInRequest request) {
         return ApiResponse.of(authService.signIn(request));
     }
 

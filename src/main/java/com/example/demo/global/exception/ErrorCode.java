@@ -27,6 +27,13 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "email_already_exists", "이미 가입된 이메일입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "user_not_found", "존재하지 않는 사용자입니다."),
 
+    // 복약 관리
+    MEDICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "medication_not_found", "존재하지 않는 약입니다."),
+    EMPTY_MEDICATIONS(HttpStatus.BAD_REQUEST, "empty_medications", "등록할 약이 없습니다."),
+    INVALID_MEDICATION(HttpStatus.BAD_REQUEST, "invalid_medication", "약 정보가 올바르지 않습니다."),
+    EXTRACTION_ALREADY_CONFIRMED(HttpStatus.CONFLICT, "extraction_already_confirmed",
+            "이미 등록한 분석 결과입니다."),
+
     // 공통
     FILE_STORAGE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "file_storage_error", "파일 저장에 실패했습니다."),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "internal_error", "서버 내부 오류가 발생했습니다."),

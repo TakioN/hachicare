@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.domain.auth.dto.SignInRequest;
+import com.example.demo.domain.auth.dto.SignInResponse;
 import com.example.demo.domain.auth.dto.SignUpRequest;
 import com.example.demo.domain.auth.dto.TokenResponse;
 import com.example.demo.domain.auth.entity.User;
@@ -33,7 +34,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public TokenResponse signIn(SignInRequest request) {
+    public SignInResponse signIn(SignInRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
 
@@ -41,7 +42,7 @@ public class AuthService {
             // 존재하지 않는 계정과 같은 응답을 준다. 어느 이메일이 가입돼 있는지 알려주지 않는다.
             throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
-        return issueTokens(user.getPublicId());
+        return SignInResponse.of(user.getEmail(), issueTokens(user.getPublicId()));
     }
 
     /**
