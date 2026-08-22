@@ -2,10 +2,12 @@ package com.example.demo.global.storage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.UUID;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +17,7 @@ import com.example.demo.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.http.ContentStreamProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -46,19 +49,36 @@ public class StorageService {
     public String upload(MultipartFile file, String objectName) {
         String objectKey = PRESCRIPTION_PREFIX + objectName + extensionOf(file.getOriginalFilename());
 
-        try (InputStream content = file.getInputStream()) {
+        String contentType = file.getContentType() != null
+                ? file.getContentType()
+                : MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+        try {
             PutObjectRequest request = PutObjectRequest.builder()
                     .bucket(properties.bucketName())
                     .key(objectKey)
-                    .contentType(file.getContentType())
+                    .contentType(contentType)
                     .build();
 
-            s3Client.putObject(request, RequestBody.fromInputStream(content, file.getSize()));
+            // 스트림 하나를 넘기면 안 된다. SDK가 서명과 재시도 때문에 본문을 두 번 이상 읽는데
+            // multipart 스트림은 되감기가 안 돼서 두 번째 읽기에서 깨진다. 매번 새로 열어준다.
+            s3Client.putObject(request, RequestBody.fromContentProvider(
+                    ContentStreamProvider.fromInputStreamSupplier(() -> openStream(file)),
+                    file.getSize(),
+                    contentType));
             return objectKey;
 
-        } catch (IOException | SdkException e) {
+        } catch (SdkException | UncheckedIOException e) {
             log.error("오브젝트 업로드 실패: key={}", objectKey, e);
             throw new CustomException(ErrorCode.FILE_STORAGE_EXCEPTION);
+        }
+    }
+
+    private static InputStream openStream(MultipartFile file) {
+        try {
+            return file.getInputStream();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 

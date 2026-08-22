@@ -11,6 +11,8 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -19,6 +21,7 @@ import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,6 +37,8 @@ import com.example.demo.domain.prescription.dto.result.PrescriptionExtractionRes
 import com.example.demo.domain.prescription.dto.result.ReviewStatus;
 import com.example.demo.domain.prescription.entity.ExtractionFailureCode;
 import com.example.demo.global.storage.StorageService;
+
+import tools.jackson.databind.json.JsonMapper;
 
 @ExtendWith(MockitoExtension.class)
 class UpstagePrescriptionAnalyzerTest {
@@ -82,10 +87,15 @@ class UpstagePrescriptionAnalyzerTest {
         };
     }
 
+    @TempDir
+    Path dumpRoot;
+
+    private String dumpDir;
+
     private void setUpWith(Clock clock, Duration pollTimeout) {
         UpstageProperties properties = new UpstageProperties(
                 BASE_URL, API_KEY, AGENT_ID,
-                Duration.ofSeconds(5), Duration.ofMillis(1), pollTimeout);
+                Duration.ofSeconds(5), Duration.ofMillis(1), pollTimeout, "all", dumpDir);
 
         RestClient.Builder builder = RestClient.builder();
         server = MockRestServiceServer.bindTo(builder).ignoreExpectOrder(true).build();
@@ -93,7 +103,7 @@ class UpstagePrescriptionAnalyzerTest {
 
         analyzer = new UpstagePrescriptionAnalyzer(
                 storageService,
-                new UpstageAgentClient(restClient, properties),
+                new UpstageAgentClient(restClient, properties, JsonMapper.builder().build()),
                 new UpstageResponseMapper(),
                 properties,
                 clock);
@@ -132,7 +142,7 @@ class UpstagePrescriptionAnalyzerTest {
                 .andExpect(jsonPath("$.model").value(AGENT_ID))
                 .andExpect(jsonPath("$.input[0].content[0].type").value("input_file"))
                 .andExpect(jsonPath("$.input[0].content[0].file_id").value("file-abc123"))
-                .andExpect(jsonPath("$.include[0]").value("last"))
+                .andExpect(jsonPath("$.include[0]").value("all"))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
     }
 
@@ -224,6 +234,34 @@ class UpstagePrescriptionAnalyzerTest {
 
         assertThat(analyzer.analyze(heicKey).reviewStatus()).isEqualTo(ReviewStatus.READY);
         server.verify();
+    }
+
+    @Test
+    void 덤프_설정이_켜져_있으면_원본_응답을_파일로_남긴다() throws Exception {
+        dumpDir = dumpRoot.toString();
+        setUpWith(Clock.fixed(Instant.parse("2026-08-22T10:00:00Z"), ZoneOffset.UTC),
+                Duration.ofSeconds(90));
+        givenStoredImage();
+        expectUpload();
+        expectCreate(PROCESSING);
+        expectPoll(ExpectedCount.once(), COMPLETED);
+
+        analyzer.analyze(IMAGE_KEY);
+
+        Path dumped = dumpRoot.resolve("response-xyz.json");
+        assertThat(dumped).exists();
+        assertThat(Files.readString(dumped)).isEqualTo(COMPLETED);
+    }
+
+    @Test
+    void 덤프_설정이_비어_있으면_아무_파일도_남기지_않는다() throws Exception {
+        givenStoredImage();
+        expectUpload();
+        expectCreate(COMPLETED);
+
+        analyzer.analyze(IMAGE_KEY);
+
+        assertThat(Files.list(dumpRoot)).isEmpty();
     }
 
     @Test

@@ -15,6 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.global.exception.CustomException;
 import com.example.demo.global.exception.ErrorCode;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class PrescriptionImageValidator {
 
@@ -43,12 +46,35 @@ public class PrescriptionImageValidator {
         }
 
         String contentType = baseContentType(document);
-        if (DECODABLE_CONTENT_TYPES.contains(contentType)) {
-            requireDecodable(document);
-        } else if (HEIF_CONTENT_TYPES.contains(contentType)) {
-            requireHeifContainer(document);
-        } else {
-            throw new CustomException(ErrorCode.UNSUPPORTED_MEDIA_TYPE);
+        try {
+            if (DECODABLE_CONTENT_TYPES.contains(contentType)) {
+                requireDecodable(document);
+            } else if (HEIF_CONTENT_TYPES.contains(contentType)) {
+                requireHeifContainer(document);
+            } else {
+                throw new CustomException(ErrorCode.UNSUPPORTED_MEDIA_TYPE);
+            }
+        } catch (CustomException e) {
+            // 왜 거부됐는지 남기지 않으면 사용자도 우리도 원인을 알 수 없다.
+            // 선두 바이트는 형식 식별자일 뿐이라 처방전 내용이 새지 않는다.
+            log.warn("이미지 거부: code={} declaredType={} size={} magic={}",
+                    e.getErrorCode().getCode(), document.getContentType(),
+                    document.getSize(), magicBytes(document));
+            throw e;
+        }
+    }
+
+    /** 선두 12바이트를 16진수로. 실제 형식이 무엇인지 판별하는 데 쓴다. */
+    private static String magicBytes(MultipartFile document) {
+        try (InputStream content = document.getInputStream()) {
+            byte[] head = content.readNBytes(12);
+            StringBuilder hex = new StringBuilder();
+            for (byte b : head) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (IOException e) {
+            return "읽기실패";
         }
     }
 

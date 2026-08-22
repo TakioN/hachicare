@@ -1,5 +1,8 @@
 package com.example.demo.domain.prescription.analyzer.upstage;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,7 @@ import com.example.demo.domain.prescription.analyzer.AnalysisFailedException;
 import com.example.demo.domain.prescription.entity.ExtractionFailureCode;
 
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Upstage Agent API(/v2) 호출.
@@ -33,11 +37,15 @@ public class UpstageAgentClient {
 
     private final RestClient restClient;
     private final UpstageProperties properties;
+    private final ObjectMapper objectMapper;
 
     public UpstageAgentClient(
-            @Qualifier("upstageRestClient") RestClient restClient, UpstageProperties properties) {
+            @Qualifier("upstageRestClient") RestClient restClient,
+            UpstageProperties properties,
+            ObjectMapper objectMapper) {
         this.restClient = restClient;
         this.properties = properties;
+        this.objectMapper = objectMapper;
     }
 
     /** 원본을 업스트림에 올리고 파일 식별자를 받는다. */
@@ -74,8 +82,9 @@ public class UpstageAgentClient {
                         "content", List.of(Map.of(
                                 "type", "input_file",
                                 "file_id", fileId)))),
-                // 마지막 단계 출력만 받는다. all이면 중간 단계 원문까지 딸려온다.
-                "include", List.of("last"));
+                // 결과가 어느 단계에 담기는지는 에이전트 구성에 달렸다. 마지막 단계가
+                // 마무리 문구뿐인 경우가 있어 기본은 전 단계를 받아 훑는다.
+                "include", List.of(properties.includeSteps()));
 
         return requireResponse(exchange("에이전트 실행", () -> restClient.post()
                 .uri("/responses")
@@ -86,10 +95,48 @@ public class UpstageAgentClient {
     }
 
     public UpstageResponse getResponse(String responseId) {
-        return requireResponse(exchange("작업 조회", () -> restClient.get()
+        String raw = exchange("작업 조회", () -> restClient.get()
                 .uri("/responses/{id}", responseId)
                 .retrieve()
-                .body(UpstageResponse.class)));
+                .body(String.class));
+
+        UpstageResponse response = requireResponse(parse(raw));
+        if (response.isTerminal()) {
+            dumpRawResponse(responseId, raw);
+        }
+        return response;
+    }
+
+    private UpstageResponse parse(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return objectMapper.readValue(raw, UpstageResponse.class);
+        } catch (RuntimeException e) {
+            throw new AnalysisFailedException(
+                    ExtractionFailureCode.INVALID_AGENT_RESPONSE, "작업 응답을 읽지 못함", e);
+        }
+    }
+
+    /**
+     * 진단용 원본 덤프. 파일에 처방전 내용이 그대로 들어가므로 설정이 비어 있으면 아무것도 하지 않는다.
+     * 실패해도 분석 자체를 막지 않는다.
+     */
+    private void dumpRawResponse(String responseId, String raw) {
+        String dir = properties.rawResponseDumpDir();
+        if (dir == null || dir.isBlank() || raw == null) {
+            return;
+        }
+        try {
+            Path target = Path.of(dir);
+            Files.createDirectories(target);
+            Path file = target.resolve(responseId + ".json");
+            Files.writeString(file, raw, StandardCharsets.UTF_8);
+            log.warn("업스트림 원본 응답을 남겼다(진단용, 처방전 내용 포함): {}", file.toAbsolutePath());
+        } catch (Exception e) {
+            log.warn("원본 응답 덤프 실패: dir={}", dir, e);
+        }
     }
 
     private static UpstageResponse requireResponse(UpstageResponse response) {
