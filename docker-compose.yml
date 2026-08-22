@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  # Redis
+  my-redis:
+    image: redis:latest
+    container_name: my-redis
+    ports:
+      - "6379:6379"
+
+  # Spring Boot
+  my-app:
+    build: .
+    container_name: my-app-container
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+    depends_on:
+      - my-redis
