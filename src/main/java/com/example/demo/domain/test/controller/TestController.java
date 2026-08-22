@@ -1,6 +1,7 @@
 package com.example.demo.domain.test.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.domain.test.service.StorageService;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.domain.test.dto.SignInRequestDto;
 import com.example.demo.domain.test.dto.SignInResponseDto;
@@ -9,12 +10,7 @@ import com.example.demo.domain.test.service.TestService;
 import com.example.demo.global.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -22,23 +18,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 public class TestController {
     private final TestService testService;
+    private final StorageService storageService;
+
+    @GetMapping("/health")
+    public ApiResponse<String> healthCheck() {
+        return ApiResponse.of("Connected...");
+    }
 
     @GetMapping("/{id}")
     public ApiResponse<String> getDescription(@PathVariable("id") Long id) {
         String desc = testService.getDesc(id);
-        return ApiResponse.success("조회성공", desc);
+        return ApiResponse.of(desc);
     }
 
     @PostMapping("/signup")
     public ApiResponse<Void> postMethodName(@RequestBody SignUpRequestDto userInfo) {
         testService.signUp(userInfo);
-        return ApiResponse.success("회원가입 성공");
+        return ApiResponse.empty();
     }
-    
+
     @PostMapping("/signin")
-    public ApiResponse<SignInResponseDto> postMethodName(@RequestBody SignInRequestDto signinReq) {
+    public ApiResponse<SignInResponseDto> signin(@RequestBody SignInRequestDto signinReq) {
         SignInResponseDto data = testService.signIn(signinReq);
-        return ApiResponse.success("로그인 성공", data);
+        return ApiResponse.of(data);
     }
+
+    @PostMapping("/file")
+    public ApiResponse<String> getFile(@RequestParam MultipartFile file) {
+        String objectKey = storageService.upload(file);
+        return ApiResponse.of(objectKey);
+    }
+
     
 }

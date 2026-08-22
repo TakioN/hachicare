@@ -1,11 +1,14 @@
 package com.example.demo.global.exception;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
-import com.example.demo.global.response.ApiResponse;
+import com.example.demo.global.response.ApiErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,14 +17,36 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ApiResponse<Void>> handleCustomException(CustomException e) {
-        ErrorCode ec = e.getErrorCode();
-        return ResponseEntity.status(ec.getStatus()).body(ApiResponse.fail(ec.getMessage()));
+    public ResponseEntity<ApiErrorResponse> handleCustomException(CustomException e) {
+        return toResponse(e.getErrorCode());
+    }
+
+    @ExceptionHandler({
+        MissingServletRequestPartException.class,
+        MissingServletRequestParameterException.class
+    })
+    public ResponseEntity<ApiErrorResponse> handleMissingDocument(Exception e) {
+        return toResponse(ErrorCode.MISSING_DOCUMENT);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiErrorResponse> handleFileTooLarge(MaxUploadSizeExceededException e) {
+        return toResponse(ErrorCode.FILE_TOO_LARGE);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiErrorResponse> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException e) {
+        return toResponse(ErrorCode.UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
+    public ResponseEntity<ApiErrorResponse> handleException(Exception e) {
         log.error("==== Server Error ==== : ", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail("서버 내부 오류"));
+        return toResponse(ErrorCode.INTERNAL_ERROR);
+    }
+
+    private ResponseEntity<ApiErrorResponse> toResponse(ErrorCode errorCode) {
+        return ResponseEntity.status(errorCode.getStatus())
+                .body(ApiErrorResponse.of(errorCode));
     }
 }
