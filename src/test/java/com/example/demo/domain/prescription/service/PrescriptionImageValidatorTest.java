@@ -69,6 +69,42 @@ class PrescriptionImageValidatorTest {
     }
 
     @Test
+    void HEIC는_컨테이너_헤더로_통과시킨다() {
+        // ImageIO가 HEIC를 디코드하지 못하므로 ftyp 브랜드만 확인한다
+        assertThatCode(() -> validator.validate(
+                file("image/heic", TestImages.heicHeader("heic"))))
+                .doesNotThrowAnyException();
+        assertThatCode(() -> validator.validate(
+                file("image/heif", TestImages.heicHeader("mif1"))))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void major_brand가_아니어도_compatible_brands에_있으면_통과한다() {
+        assertThatCode(() -> validator.validate(
+                file("image/heic", TestImages.heicHeader("mif1", "miaf", "heic"))))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void HEIC라고_했지만_다른_컨테이너면_invalid_image() {
+        // ftyp는 있지만 mp4 브랜드
+        assertRejectedWith(file("image/heic", TestImages.heicHeader("isom", "iso2", "mp41")),
+                ErrorCode.INVALID_IMAGE);
+        // ftyp 자체가 없음
+        assertRejectedWith(file("image/heic", TestImages.png()), ErrorCode.INVALID_IMAGE);
+        // 헤더가 잘림
+        assertRejectedWith(file("image/heic", new byte[] {0, 0, 0, 1, 'f'}),
+                ErrorCode.INVALID_IMAGE);
+    }
+
+    @Test
+    void HEIC_바이트라도_png라고_주장하면_디코드_검사에_걸린다() {
+        assertRejectedWith(file("image/png", TestImages.heicHeader("heic")),
+                ErrorCode.INVALID_IMAGE);
+    }
+
+    @Test
     void 오류_코드는_문서에_정의된_상태값을_가진다() {
         assertThat(ErrorCode.MISSING_DOCUMENT.getCode()).isEqualTo("missing_document");
         assertThat(ErrorCode.UNSUPPORTED_MEDIA_TYPE.getCode()).isEqualTo("unsupported_media_type");

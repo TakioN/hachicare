@@ -37,11 +37,15 @@ class SessionCookieSecurityConfigTest {
 
     @Test
     void 설정이_통째로_빠져도_코드_폴백이_안전한_쪽이다() throws Exception {
-        var annotation = AnonymousSessionManager.class
-                .getDeclaredConstructor(boolean.class)
-                .getParameters()[0]
-                .getAnnotation(org.springframework.beans.factory.annotation.Value.class);
+        var parameters = AnonymousSessionManager.class
+                .getDeclaredConstructor(boolean.class, String.class)
+                .getParameters();
 
-        assertThat(annotation.value()).isEqualTo("${app.session.cookie-secure:true}");
+        assertThat(valueOf(parameters[0])).isEqualTo("${app.session.cookie-secure:true}");
+        assertThat(valueOf(parameters[1])).isEqualTo("${app.session.cookie-same-site:Lax}");
+    }
+
+    private static String valueOf(java.lang.reflect.Parameter parameter) {
+        return parameter.getAnnotation(org.springframework.beans.factory.annotation.Value.class).value();
     }
 }
