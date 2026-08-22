@@ -30,3 +30,11 @@ app:
     ip:
       limit: 60
       window: 10m
+
+upstage:
+  base-url: https://api.upstage.ai/v2
+  # api-key와 agent-id는 프로파일별 yml에 둔다
+  request-timeout: 15s
+  poll-interval: 2s
+  # 이 시간을 넘기면 upstream_timeout. app.extraction.timeout보다 짧아야 한다.
+  poll-timeout: 90s
