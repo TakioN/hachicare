@@ -2,6 +2,7 @@ package com.example.demo.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,6 +38,7 @@ public class SecurityConfig {
         http
             // 토큰 기반이라 세션도 CSRF 토큰도 쓰지 않는다.
             .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
             .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             // 기본을 닫아둔다. 열어야 할 경로만 위에 적는다.
