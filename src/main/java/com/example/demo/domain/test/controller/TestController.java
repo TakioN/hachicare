@@ -27,11 +27,6 @@ public class TestController {
         return ApiResponse.of("Connected...");
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse<String> getDescription(@PathVariable("id") Long id) {
-        return ApiResponse.of(testService.getDesc(id));
-    }
-
     @PostMapping("/file")
     public ApiResponse<String> getFile(@RequestParam MultipartFile file) {
         return ApiResponse.of(storageService.upload(file));
